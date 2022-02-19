@@ -1,19 +1,22 @@
 <template>
   <div class="container pr-1">
     <div class="card">
-    <h2>Динамические и синхронные компоненты</h2>
+      <async-component></async-component>
+    <h2>Динамические и асинхронные компоненты</h2>
 
       <app-button
-          :color="active === 'one' ? 'primary' : ''"
+          ref="myBtn"
+          :color="oneColor"
           @action="active = 'one'"
       >One</app-button>
       <app-button
-          :color="active === 'two' ? 'primary' : ''"
+          :color="twoColor"
           @action="active = 'two'"
       >Two</app-button>
     </div>
-
+    <keep-alive>
     <component :is="componentName"></component>
+    </keep-alive>
   </div>
 </template>
 
@@ -21,6 +24,7 @@
 import AppButton from "@/components/AppButton"
 import AppTextOne from "@/components/AppTextOne"
 import AppTextTwo from "@/components/AppTextTwo"
+// import AppAsyncComponent from "@/components/AppAsyncComponent"
 
 export default {
   data() {
@@ -28,15 +32,33 @@ export default {
       active: 'one' // 'two'
     }
   },
+  mounted() {
+    /*setTimeout(() => {
+      this.componentName = 'new comp name'
+    }, 1500)*/
+    this.$refs.myBtn.btnLog()
+  },
   computed: {
-    componentName() {
-      return 'app-text-' + this.active
+    componentName: {
+      get() {
+        return 'app-text-' + this.active
+      },
+      set(value) {
+        console.log('componentName', value)
+      }
+    },
+    oneColor() {
+      return this.active === 'one' ? 'primary' : ''
+    },
+    twoColor() {
+      return this.active === 'two' ? 'primary' : ''
     }
   },
   components: {
     AppButton,
     AppTextOne,
-    AppTextTwo
+    AppTextTwo,
+    // AppAsyncComponent
   }
 }
 </script>
